@@ -16,4 +16,5 @@ import { AdminMenuModule } from './modules/admin-menu/admin-menu.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}

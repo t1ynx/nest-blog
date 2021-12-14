@@ -3,8 +3,9 @@ import { MenuNode, PatchMenuNode, ROOT_MENU_NODE_ID } from './menu-node';
 
 @Injectable()
 export class MenuService {
-  private nodes: {[id: string]: MenuNode} = {};
+  private nodes: { [id: string]: MenuNode } = {};
   private patches: PatchMenuNode[] = [];
+
   /**
    * Получить древовидное меню.
    *
@@ -14,9 +15,9 @@ export class MenuService {
    * Ветки не могут иметь ссылку, она будет очищена.
    */
   getMenu(): MenuNode[] {
-    const nodeMap: {[id: string]: MenuNode} = {};
+    const nodeMap: { [id: string]: MenuNode } = {};
     let src = Object.values(this.nodes).map(node => {
-      const copy = {...node};
+      const copy = { ...node };
       nodeMap[copy.id] = copy;
       return copy;
     });
@@ -25,7 +26,7 @@ export class MenuService {
       if (nodeMap[patch.id]) {
         Object.assign(nodeMap[patch.id], patch);
       }
-    })
+    });
 
     src = src.filter(node => !node.removed);
     // отсортировать (нет теста)
@@ -35,13 +36,13 @@ export class MenuService {
 
   private getMenuForNode(id: string, src: MenuNode[]): MenuNode[] {
     const res = src.filter(node => node.parentId === id)
-      .map(({href, ...node}) => {
+      .map(({ href, ...node }) => {
         const children = this.getMenuForNode(node.id, src);
 
         if (children.length > 0) {
           return {
             ...node,
-            children
+            children,
           };
         }
 
@@ -49,7 +50,7 @@ export class MenuService {
           ...node,
           href,
           removed: !href,
-          children: []
+          children: [],
         };
       }).filter(node => !node.removed);
 
@@ -68,10 +69,10 @@ export class MenuService {
     nodes.forEach(node => {
       const sanitizedChildren = node.children?.map(child => ({
         ...child,
-        parentId: node.id
+        parentId: node.id,
       })) || [];
 
-      const {children, ...sanitizedNode} = node;
+      const { children, ...sanitizedNode } = node;
       this.add(...sanitizedChildren);
 
       this.nodes[node.id] = sanitizedNode;
@@ -86,7 +87,7 @@ export class MenuService {
   patch(...patches: PatchMenuNode[]): void {
     this.patches = [
       ...this.patches,
-      ...patches
+      ...patches,
     ];
   }
 
@@ -98,7 +99,7 @@ export class MenuService {
   remove(...ids: string[]): void {
     this.patch(...ids.map(id => ({
       id,
-      removed: true
+      removed: true,
     })));
   }
 }
